@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: estapi-practice
+  datasource:
+    url: jdbc:mysql://localhost:3306/jpa_study
+    username: root
+    password: 1024
+    driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+#        show_sql: true <- 얘는 system.out에 출력함
+        format_sql: true
+
+
+
+
+## JPA Log
+Logging:
+  level:
+    org.hibernate.SQL: debug  # <- 얘는 log
+    org.hibernate.type: trace
