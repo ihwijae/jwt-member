@@ -17,8 +17,8 @@ public class MemberSignUpResponse {
 
     public static MemberSignUpResponse toDto(Member member) {
         return MemberSignUpResponse.builder()
-                .email(member.getUserEmail())
-                .username(member.getUserName())
+                .email(member.getEmail())
+                .username(member.getName())
                 .nickname(member.getNickName())
                 .build();
     }

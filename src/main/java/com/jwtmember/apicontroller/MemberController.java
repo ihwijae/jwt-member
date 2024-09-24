@@ -8,11 +8,15 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.context.properties.bind.BindResult;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,14 +26,8 @@ public class MemberController {
 
     private final MemberService memberService;
 
-    // API 예외처리 테스트
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse SingUpDuplication(MethodArgumentNotValidException ex) {
-        log.error(ex.getMessage());
-        return new ErrorResponse("중복입니다", "어떤게중복");
-    }
-    
+
+
 
     @PostMapping("/members")
     @ResponseStatus(HttpStatus.OK)
@@ -39,4 +37,20 @@ public class MemberController {
         MemberSignUpResponse memberSignUpRsp = memberService.singUp(request);
         return memberSignUpRsp;
     }
+
+
+    // 이메일 중복 검증 api
+    @GetMapping("/members/email/{email}")
+    public String emailDuplicate(@PathVariable String email) {
+        return memberService.emailDuplicate(email);
+    }
+
+    // 닉네임 중복 검증 api
+    @GetMapping("/members/nickName/{nickName}")
+    public String nickNameDuplicate(@PathVariable String nickName) {
+        return memberService.nickNameDuplicate(nickName);
+    }
+
+
+
 }
