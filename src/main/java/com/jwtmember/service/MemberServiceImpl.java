@@ -15,11 +15,11 @@ public class MemberServiceImpl implements MemberService {
     private final MemberQueryRepository memberQueryRepository;
 
     @Override
-    public MemberSignUpRsp singUp(MemberSignUpReq req) {
+    public MemberSignUpResponse singUp(MemberSignUpRequest req) {
 
         Member entity = Member.toEntity(req);
         Member save = memberRepository.save(entity);
 
-        return MemberSignUpRsp.toDto(save);
+        return MemberSignUpResponse.toDto(save);
     }
 }

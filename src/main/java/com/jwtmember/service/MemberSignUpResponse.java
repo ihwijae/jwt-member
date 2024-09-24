@@ -6,7 +6,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class MemberSignUpRsp {
+public class MemberSignUpResponse {
 
 
     private String email;
@@ -15,8 +15,8 @@ public class MemberSignUpRsp {
     private String birthdate;
 
 
-    public static MemberSignUpRsp toDto(Member member) {
-        return MemberSignUpRsp.builder()
+    public static MemberSignUpResponse toDto(Member member) {
+        return MemberSignUpResponse.builder()
                 .email(member.getUserEmail())
                 .username(member.getUserName())
                 .nickname(member.getNickName())

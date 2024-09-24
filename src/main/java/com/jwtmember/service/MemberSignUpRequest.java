@@ -6,7 +6,7 @@ import lombok.Data;
 import org.hibernate.validator.constraints.Length;
 
 @Data
-public class MemberSignUpReq {
+public class MemberSignUpRequest {
 
 
     @NotBlank(message = "이메일을 입력하세요")

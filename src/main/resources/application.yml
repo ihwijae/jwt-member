@@ -15,6 +15,11 @@ spring:
 #        show_sql: true <- 얘는 system.out에 출력함
         format_sql: true
 
+# 스프링이 기본 제공하는 에러페이지를 끄는 옵션
+#server:
+#  error:
+#    whitelabel:
+#      enabled: false
 
 
 

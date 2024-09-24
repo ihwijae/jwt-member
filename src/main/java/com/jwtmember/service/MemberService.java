@@ -4,7 +4,7 @@ public interface MemberService {
 
 
 
-    public MemberSignUpRsp singUp (MemberSignUpReq req);
+    public MemberSignUpResponse singUp (MemberSignUpRequest req);
 
 
 

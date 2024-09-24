@@ -1,11 +1,9 @@
 package com.jwtmember.domain;
 
-import com.jwtmember.service.MemberSignUpReq;
-import jakarta.persistence.Column;
+import com.jwtmember.service.MemberSignUpRequest;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -32,7 +30,7 @@ public class Member extends BaseTimeEntity{
 
 
 
-    public static Member toEntity(MemberSignUpReq req){
+    public static Member toEntity(MemberSignUpRequest req){
         return Member.builder()
                 .userEmail(req.getEmail())
                 .password(req.getPassword())
