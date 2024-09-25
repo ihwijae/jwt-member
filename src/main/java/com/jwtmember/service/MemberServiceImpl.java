@@ -4,8 +4,8 @@ import com.jwtmember.domain.Member;
 import com.jwtmember.exception.MemberException;
 import com.jwtmember.repository.MemberQueryRepository;
 import com.jwtmember.repository.MemberRepository;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-//import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -16,7 +16,14 @@ public class MemberServiceImpl implements MemberService {
     private final MemberQueryRepository memberQueryRepository;
 
     @Override
+    @Transactional
     public MemberSignUpResponse singUp(MemberSignUpRequest req) {
+
+       // 이메일 중복 검증
+        emailDuplicate(req.getEmail());
+
+        // 닉네임 중복 검증
+        nickNameDuplicate(req.getNickname());
 
         Member entity = Member.toEntity(req);
         Member save = memberRepository.save(entity);
@@ -25,31 +32,21 @@ public class MemberServiceImpl implements MemberService {
     }
 
     @Override
-    public String emailDuplicate(String email) {
-        boolean b = memberRepository.existsByEmail(email);
+    public void emailDuplicate(String email) {
+        boolean result = memberRepository.existsByEmail(email);
 
-        String result;
-        if(!b) {
-            result = "이메일 사용이 가능합니다.";
-            return result;
-        } else {
-            throw new MemberException.EmailDuplicateException("이메일이 중복 됐습니다");
+        if(result) {
+            throw new MemberException.EmailDuplicateException("중복된 이메일 입니다.");
         }
 
     }
 
     @Override
-    public String nickNameDuplicate(String nickName) {
-        boolean b = memberRepository.existsByNickName(nickName);
+    public void nickNameDuplicate(String nickName) {
+        boolean result = memberRepository.existsByNickName(nickName);
 
-        String result;
-
-        if(!b) {
-            result = "닉네임 사용이 가능합니다.";
-            return result;
-        } else {
-            throw new MemberException.NickNameDuplicateException("이미 사용중인 닉네임 입니다 다른 닉네임을 선택하세요.");
+        if(result) {
+            throw new MemberException.NickNameDuplicateException("중복된 닉네임 입니다 다른 닉네임을 선택하세요");
         }
-
     }
 }

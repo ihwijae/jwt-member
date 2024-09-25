@@ -33,7 +33,6 @@ public class MemberController {
     @ResponseStatus(HttpStatus.OK)
     public MemberSignUpResponse signUp(@RequestBody @Valid MemberSignUpRequest request) {
         log.info("회원가입 시작");
-
         MemberSignUpResponse memberSignUpRsp = memberService.singUp(request);
         return memberSignUpRsp;
     }
@@ -42,13 +41,15 @@ public class MemberController {
     // 이메일 중복 검증 api
     @GetMapping("/members/email/{email}")
     public String emailDuplicate(@PathVariable String email) {
-        return memberService.emailDuplicate(email);
+        memberService.emailDuplicate(email);
+        return "이메일 사용이 가능합니다";
     }
 
     // 닉네임 중복 검증 api
     @GetMapping("/members/nickName/{nickName}")
     public String nickNameDuplicate(@PathVariable String nickName) {
-        return memberService.nickNameDuplicate(nickName);
+        memberService.nickNameDuplicate(nickName);
+        return "닉네임 사용이 가능합니다";
     }
 
 

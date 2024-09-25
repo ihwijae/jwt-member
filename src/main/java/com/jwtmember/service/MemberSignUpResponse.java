@@ -9,6 +9,7 @@ import lombok.Data;
 public class MemberSignUpResponse {
 
 
+    private Long id;
     private String email;
     private String username;
     private String nickname;
@@ -17,6 +18,7 @@ public class MemberSignUpResponse {
 
     public static MemberSignUpResponse toDto(Member member) {
         return MemberSignUpResponse.builder()
+                .id(member.getId())
                 .email(member.getEmail())
                 .username(member.getName())
                 .nickname(member.getNickName())

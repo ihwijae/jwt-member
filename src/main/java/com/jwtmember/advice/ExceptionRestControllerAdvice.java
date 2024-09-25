@@ -48,6 +48,7 @@ public class ExceptionRestControllerAdvice {
     public ResponseEntity<Map<String, String>> handleDuplicateEmailException(MemberException.NickNameDuplicateException ex) {
         Map<String, String> errors = new HashMap<>();
 
+
         String message = ex.getMessage();
         errors.put("nickname", message);
 

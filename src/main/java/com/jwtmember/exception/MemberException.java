@@ -7,6 +7,8 @@ public class MemberException extends RuntimeException {
         super(message);
     }
 
+
+
     public static class EmailDuplicateException extends MemberException {
         public EmailDuplicateException(String message) {
             super(message);

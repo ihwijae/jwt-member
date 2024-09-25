@@ -1,0 +1,72 @@
+package com.jwtmember.service;
+
+import com.jwtmember.exception.MemberException;
+import com.jwtmember.repository.MemberRepository;
+import jakarta.transaction.Transactional;
+import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.Commit;
+
+import static org.junit.jupiter.api.Assertions.*;
+
+@SpringBootTest
+class MemberServiceTest {
+
+
+    private final MemberService memberService;
+    private final MemberRepository memberRepository;
+
+    @Autowired
+    public MemberServiceTest(MemberService memberService, MemberRepository memberRepository) {
+        this.memberService = memberService;
+        this.memberRepository = memberRepository;
+    }
+
+    @Test
+    @Transactional
+    public void 회원가입() {
+
+        //given
+        MemberSignUpRequest memberSignUpRequest = new MemberSignUpRequest();
+
+        memberSignUpRequest.setEmail("test@test.com");
+        memberSignUpRequest.setName("test");
+        memberSignUpRequest.setPassword("123456789");
+        memberSignUpRequest.setCheckedPassword("123456789");
+        memberSignUpRequest.setPhone("01012345678");
+        memberSignUpRequest.setNickname("테스트닉네임");
+
+        //when
+        MemberSignUpResponse memberSignUpResponse = memberService.singUp(memberSignUpRequest);
+        Long saveId = memberSignUpResponse.getId();
+
+        //then
+        assertEquals(memberSignUpRequest.getEmail(), memberSignUpResponse.getEmail());
+    }
+
+    @Test
+    @Transactional
+    public void 회원가입중복예외() {
+
+
+        //given
+        MemberSignUpRequest request1 = new MemberSignUpRequest();
+        request1.setEmail("test@sss.com");
+
+        MemberSignUpRequest request2 = new MemberSignUpRequest();
+        request2.setEmail("test@sss.com");
+
+
+        //when
+        memberService.singUp(request1);
+
+        //then
+        assertThrows(MemberException.EmailDuplicateException.class, () -> {
+            memberService.singUp(request2);
+        });
+
+    }
+
+}

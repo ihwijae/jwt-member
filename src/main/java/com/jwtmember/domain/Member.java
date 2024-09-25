@@ -12,9 +12,10 @@ import java.time.LocalDate;
 
 @Entity
 @Getter @Setter
+@Data
 @Builder
-@AllArgsConstructor
 @NoArgsConstructor
+@AllArgsConstructor
 public class Member extends BaseTimeEntity{
 
 

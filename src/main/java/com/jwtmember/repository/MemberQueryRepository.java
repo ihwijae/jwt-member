@@ -12,4 +12,6 @@ public class MemberQueryRepository {
     public MemberQueryRepository(EntityManager em) {
         this.queryFactory = new JPAQueryFactory(em);
     }
+
+
 }
