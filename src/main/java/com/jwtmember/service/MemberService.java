@@ -1,5 +1,7 @@
 package com.jwtmember.service;
 
+import java.util.List;
+
 public interface MemberService {
 
 
@@ -10,4 +12,7 @@ public interface MemberService {
     public void emailDuplicate (String email);
 
     public void nickNameDuplicate (String nickName);
+
+    public List<MemberFindAllResponse> memberFindAll();
+
 }

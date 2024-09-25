@@ -1,5 +1,6 @@
 package com.jwtmember.apicontroller;
 
+import com.jwtmember.service.MemberFindAllResponse;
 import com.jwtmember.service.MemberService;
 import com.jwtmember.service.MemberSignUpRequest;
 import com.jwtmember.service.MemberSignUpResponse;
@@ -51,6 +52,12 @@ public class MemberController {
         memberService.nickNameDuplicate(nickName);
         return "닉네임 사용이 가능합니다";
     }
+
+    @GetMapping("/members")
+    public List<MemberFindAllResponse> memberFindAll() {
+        return memberService.memberFindAll();
+    }
+
 
 
 

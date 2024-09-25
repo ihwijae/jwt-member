@@ -30,7 +30,6 @@ public class Member extends BaseTimeEntity{
     private String name;
     private LocalDate birthDate;
     private String nickName;
-    private String phoneNumber;
 
 
 
@@ -38,8 +37,8 @@ public class Member extends BaseTimeEntity{
         return Member.builder()
                 .email(req.getEmail())
                 .password(req.getPassword())
+                .name(req.getName())
                 .nickName(req.getNickname())
-                .phoneNumber(req.getPhone())
                 .build();
     }
 }

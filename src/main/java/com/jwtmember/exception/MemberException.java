@@ -20,4 +20,10 @@ public class MemberException extends RuntimeException {
             super(message);
         }
     }
+
+    public static class CheckedPassWordDuplicateException extends MemberException {
+        public CheckedPassWordDuplicateException(String message) {
+            super(message);
+        }
+    }
 }

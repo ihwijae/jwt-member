@@ -24,8 +24,6 @@ public class MemberSignUpRequest {
     @NotBlank(message = "이름을 입력하세요.")
     private String name;
 
-    @NotBlank(message = "전화번호를 입력하세요")
-    private String phone;
 
     @NotBlank(message = "닉넴임을 입력하세요")
     private String nickname;

@@ -6,14 +6,23 @@ import com.jwtmember.repository.MemberQueryRepository;
 import com.jwtmember.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class MemberServiceImpl implements MemberService {
 
     private final MemberRepository memberRepository;
-    private final MemberQueryRepository memberQueryRepository;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
+
 
     @Override
     @Transactional
@@ -24,6 +33,16 @@ public class MemberServiceImpl implements MemberService {
 
         // 닉네임 중복 검증
         nickNameDuplicate(req.getNickname());
+
+        // 비밀번호 중복 확인
+        if(!req.getPassword().equals(req.getCheckedPassword())) {
+            throw new MemberException.CheckedPassWordDuplicateException("비밀번호가 일치하지 않습니다.");
+        }
+
+        // 비밀번호 암호화
+        req.setPassword(bCryptPasswordEncoder.encode(req.getPassword()));
+        log.info("paswwEncode = {} ", req.getPassword());
+
 
         Member entity = Member.toEntity(req);
         Member save = memberRepository.save(entity);
@@ -48,5 +67,14 @@ public class MemberServiceImpl implements MemberService {
         if(result) {
             throw new MemberException.NickNameDuplicateException("중복된 닉네임 입니다 다른 닉네임을 선택하세요");
         }
+    }
+
+    @Override
+    public List<MemberFindAllResponse> memberFindAll() {
+        List<Member> allMember = memberRepository.findAll();
+
+        return allMember.stream()
+                .map(mem -> new MemberFindAllResponse(mem.getName(), mem.getEmail()))
+                .collect(Collectors.toList());
     }
 }
