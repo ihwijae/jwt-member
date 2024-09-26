@@ -15,4 +15,6 @@ public interface MemberService {
 
     public List<MemberFindAllResponse> memberFindAll();
 
+    public LoginResponse login(LoginRequest loginRequest);
+
 }

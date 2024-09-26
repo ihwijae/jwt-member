@@ -1,25 +1,21 @@
 package com.jwtmember.domain;
 
 import com.jwtmember.service.MemberSignUpRequest;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
+import jakarta.persistence.*;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
 @Entity
-@Getter @Setter
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Member extends BaseTimeEntity{
 
 
-    @Id @GeneratedValue
+    @Id @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
 
@@ -30,6 +26,9 @@ public class Member extends BaseTimeEntity{
     private String name;
     private LocalDate birthDate;
     private String nickName;
+//
+//    @Enumerated(EnumType.STRING)
+//    private Authority authority;
 
 
 
@@ -41,4 +40,6 @@ public class Member extends BaseTimeEntity{
                 .nickName(req.getNickname())
                 .build();
     }
+
+
 }

@@ -35,7 +35,6 @@ class MemberServiceTest {
         memberSignUpRequest.setName("test");
         memberSignUpRequest.setPassword("123456789");
         memberSignUpRequest.setCheckedPassword("123456789");
-        memberSignUpRequest.setPhone("01012345678");
         memberSignUpRequest.setNickname("테스트닉네임");
 
         //when
@@ -69,4 +68,17 @@ class MemberServiceTest {
 
     }
 
+    @Test
+    @Transactional
+    public void 로그인테스트 () {
+        LoginRequest loginRequest = new LoginRequest();
+
+        loginRequest.setEmail("bbb@bbb.com");
+        loginRequest.setPassword("1234567833");
+
+        memberService.login(loginRequest);
+
+    }
+
 }
+

@@ -1,9 +1,6 @@
 package com.jwtmember.apicontroller;
 
-import com.jwtmember.service.MemberFindAllResponse;
-import com.jwtmember.service.MemberService;
-import com.jwtmember.service.MemberSignUpRequest;
-import com.jwtmember.service.MemberSignUpResponse;
+import com.jwtmember.service.*;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -30,12 +27,18 @@ public class MemberController {
 
 
 
-    @PostMapping("/members")
+    @PostMapping("/members/join")
     @ResponseStatus(HttpStatus.OK)
     public MemberSignUpResponse signUp(@RequestBody @Valid MemberSignUpRequest request) {
         log.info("회원가입 시작");
         MemberSignUpResponse memberSignUpRsp = memberService.singUp(request);
         return memberSignUpRsp;
+    }
+
+    @PostMapping("/members/login")
+    @ResponseStatus(HttpStatus.OK)
+    public LoginResponse login(@RequestBody @Valid LoginRequest request) {
+        return memberService.login(request);
     }
 
 

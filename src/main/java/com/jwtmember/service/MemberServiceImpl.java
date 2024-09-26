@@ -2,7 +2,6 @@ package com.jwtmember.service;
 
 import com.jwtmember.domain.Member;
 import com.jwtmember.exception.MemberException;
-import com.jwtmember.repository.MemberQueryRepository;
 import com.jwtmember.repository.MemberRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -76,5 +76,20 @@ public class MemberServiceImpl implements MemberService {
         return allMember.stream()
                 .map(mem -> new MemberFindAllResponse(mem.getName(), mem.getEmail()))
                 .collect(Collectors.toList());
+
+    }
+
+    @Override
+    public LoginResponse login(LoginRequest loginRequest) {
+
+        Member member = memberRepository.findByEmail(loginRequest.getEmail())
+                .orElseThrow( () -> new MemberException.EmailDuplicateException("가입 되지 않은 이메일 입니다."));
+
+        if(!bCryptPasswordEncoder.matches(loginRequest.getPassword(), member.getPassword())) {
+            throw new MemberException.PassWordDuplicateException("비밀번호가 틀렸습니다 다시 입력하세요.");
+        }
+
+
+        return new LoginResponse(member.getEmail(), "정상적으로 로그인 됐습니다.");
     }
 }

@@ -28,3 +28,9 @@ Logging:
   level:
     org.hibernate.SQL: debug  # <- 얘는 log
     org.hibernate.type: trace
+
+
+## jwt HS256 알고리즘
+jwt:
+  secret: VlwEyVBsYt9V7zq57TejMnVUyzblYcfPQye08f7MGVA9XkHa
+

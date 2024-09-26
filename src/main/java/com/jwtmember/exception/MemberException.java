@@ -26,4 +26,11 @@ public class MemberException extends RuntimeException {
             super(message);
         }
     }
+
+    public static class PassWordDuplicateException extends MemberException {
+
+        public PassWordDuplicateException(String message) {
+            super(message);
+        }
+    }
 }

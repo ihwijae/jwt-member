@@ -1,5 +1,6 @@
 package com.jwtmember.advice;
 
+import com.jwtmember.domain.Member;
 import com.jwtmember.exception.MemberException;
 import com.jwtmember.service.MemberSignUpRequest;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @RestControllerAdvice
 @Slf4j
@@ -25,8 +27,10 @@ public class ExceptionRestControllerAdvice {
     public ResponseEntity<Map<String, String>> handleValidationExceptions(MethodArgumentNotValidException ex) {
         Map<String, String> errors = new HashMap<>();
 
+
         // {필드이름 : 오류 메시지} 출력
-        ex.getBindingResult().getFieldErrors().forEach(error ->
+        ex.getBindingResult().getFieldErrors()
+                .forEach(error ->
         { errors.put(error.getField(), error.getDefaultMessage());}
         );
 
@@ -61,6 +65,16 @@ public class ExceptionRestControllerAdvice {
         errors.add(ex.getMessage());
 
         return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(MemberException.PassWordDuplicateException.class)
+    public ResponseEntity<List<String>> handleDuplicatePassWordException(MemberException.PassWordDuplicateException ex) {
+        List<String> errors = new ArrayList<>();
+
+        errors.add(ex.getMessage());
+
+        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+
     }
 
 
