@@ -27,8 +27,11 @@ public class Member extends BaseTimeEntity{
     private LocalDate birthDate;
     private String nickName;
 //
-//    @Enumerated(EnumType.STRING)
-//    private Authority authority;
+
+
+    @Enumerated(EnumType.STRING)
+    @Column(name = "role")
+    private Authority authority;
 
 
 

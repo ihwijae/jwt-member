@@ -27,7 +27,7 @@ public class MemberController {
 
 
 
-    @PostMapping("/members/join")
+    @PostMapping("/join")
     @ResponseStatus(HttpStatus.OK)
     public MemberSignUpResponse signUp(@RequestBody @Valid MemberSignUpRequest request) {
         log.info("회원가입 시작");
@@ -35,7 +35,7 @@ public class MemberController {
         return memberSignUpRsp;
     }
 
-    @PostMapping("/members/login")
+    @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public LoginResponse login(@RequestBody @Valid LoginRequest request) {
         return memberService.login(request);
