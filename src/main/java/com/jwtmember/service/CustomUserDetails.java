@@ -21,17 +21,17 @@ public class CustomUserDetails implements UserDetails {
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
 
-//       Collection<GrantedAuthority> collection = new ArrayList<>();
-//
-//       collection.add(new GrantedAuthority() {
-//
-//           @Override
-//           public String getAuthority() {
-//               return member.getAuthority().name();
-//           }
-//       });
+       Collection<GrantedAuthority> collection = new ArrayList<>();
 
-       return null;
+       collection.add(new GrantedAuthority() {
+
+           @Override
+           public String getAuthority() {
+               return member.getAuthority().name();
+           }
+       });
+
+       return collection;
     }
 
     @Override

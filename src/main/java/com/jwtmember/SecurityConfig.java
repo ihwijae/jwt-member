@@ -1,5 +1,8 @@
 package com.jwtmember;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jwtmember.jwt.JwtFilter;
+import com.jwtmember.jwt.JwtUtil;
 import com.jwtmember.jwt.LoginFilter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -22,6 +25,9 @@ public class SecurityConfig {
 
 
     private final AuthenticationConfiguration authenticationConfiguration;
+    private final ObjectMapper objectMapper;
+    private final JwtUtil jwtUtil;
+
 
     @Bean
     public AuthenticationManager authenticationManagerBean(AuthenticationConfiguration configuration) throws Exception {
@@ -47,7 +53,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/members/login", "/", "/api/members/join").permitAll() // 모든 권한을 허용
+                        .requestMatchers("/api/login", "/", "/api/join").permitAll() // 모든 권한을 허용
                         .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 권한 사용자만 접근
                         .anyRequest().authenticated()); // 다른 요청에 대해서는 로그인한 사용자만 접근 가능
 
@@ -59,7 +65,11 @@ public class SecurityConfig {
 
         // LoginFilter (필터) 추가 - 스프링 시큐리티 필터체인에 필터를 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManagerBean(authenticationConfiguration)), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManagerBean(authenticationConfiguration), objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+
+        //JwtFilter 필터 등록
+        http.addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class); //로그인 필터 앞에 먼저 실행한다는 뜻.
+
 
         return http.build();
     }

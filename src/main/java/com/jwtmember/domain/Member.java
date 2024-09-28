@@ -2,6 +2,7 @@ package com.jwtmember.domain;
 
 import com.jwtmember.service.MemberSignUpRequest;
 import jakarta.persistence.*;
+import jakarta.validation.groups.Default;
 import lombok.*;
 import org.springframework.stereotype.Service;
 
@@ -41,6 +42,15 @@ public class Member extends BaseTimeEntity{
                 .password(req.getPassword())
                 .name(req.getName())
                 .nickName(req.getNickname())
+                .authority(Authority.ROLE_USER)
+                .build();
+    }
+
+    public static Member authorization(String email, String password, Authority authority) {
+        return Member.builder()
+                .email(email)
+                .password(password)
+                .authority(authority)
                 .build();
     }
 

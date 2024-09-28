@@ -38,7 +38,7 @@ public class MemberController {
     @PostMapping("/login")
     @ResponseStatus(HttpStatus.OK)
     public LoginResponse login(@RequestBody @Valid LoginRequest request) {
-        return memberService.login(request);
+         return memberService.login(request);
     }
 
 
