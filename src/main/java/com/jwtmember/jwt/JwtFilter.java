@@ -20,6 +20,9 @@ import java.io.IOException;
 @Slf4j
 public class JwtFilter extends OncePerRequestFilter {
 
+    /**
+     * HTTP 요청이 올 때마다 토큰을 검증한다.doFilterInternal 메서드에서 토큰의 유효성을 확인.
+     */
     private final JwtUtil jwtUtil;
 
 

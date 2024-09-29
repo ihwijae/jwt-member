@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jwtmember.jwt.JwtFilter;
 import com.jwtmember.jwt.JwtUtil;
 import com.jwtmember.jwt.LoginFilter;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -16,6 +17,11 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+
+import java.util.Collection;
+import java.util.Collections;
 
 
 @Configuration
@@ -37,6 +43,25 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+
+        // cors 설정
+        http
+                .cors(cors -> cors.configurationSource(new CorsConfigurationSource() {
+
+                    @Override
+                    public CorsConfiguration getCorsConfiguration(HttpServletRequest request) {
+                        CorsConfiguration configuration = new CorsConfiguration();
+
+                        configuration.setAllowedOrigins(Collections.singletonList("http://localhost:3000")); // 프론트엔드 서버 포트
+                        configuration.setAllowedMethods(Collections.singletonList("*")); //허용할 Http 메서드
+                        configuration.setAllowCredentials(true);
+                        configuration.setAllowedHeaders(Collections.singletonList("*")); //허용할 Http 헤더
+                        configuration.setMaxAge(3600L); //허용을 물고있을 시간
+                        configuration.setExposedHeaders(Collections.singletonList("Authorization")); // 백엔드 -> 프론트로 응답 해줄때 헤더에 Authorization에 Jwt를 보내주니까 허용해줘야한다.
+
+                        return configuration;
+                    }
+                }));
 
         //csrf disable
         http
@@ -69,6 +94,8 @@ public class SecurityConfig {
 
         //JwtFilter 필터 등록
         http.addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class); //로그인 필터 앞에 먼저 실행한다는 뜻.
+
+
 
 
         return http.build();
