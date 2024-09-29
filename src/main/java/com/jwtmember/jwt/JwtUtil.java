@@ -58,10 +58,24 @@ public class JwtUtil {
                 .before(new Date());
     }
 
-    public String createJwt (String email, String role, Long expireMs) {
+    // 토큰 비교 (Access 토큰이 필요한 요청인데 Refresh 토큰으로 요청을 하거나.. 그런 경우를 방지하기위함
+    public String getCategory (String token) {
+        return Jwts
+                .parser()
+                .verifyWith(secretKey)
+                .build()
+                .parseSignedClaims(token)
+                .getPayload()
+                .get("category", String.class);
+    }
+
+
+
+    public String createJwt (String category, String email, String role, Long expireMs) {
 
         return Jwts
                 .builder()
+                .claim("category", category)
                 .claim("email", email) //payload에 해당하는 부분에 데이터를 넣는다.
                 .claim("role", role)
                 .issuedAt(new Date(System.currentTimeMillis())) // 토큰 발행일자 (현재 시간) 밀리초 표현
@@ -69,4 +83,5 @@ public class JwtUtil {
                 .signWith(secretKey) //시크릿키를 통해 토큰 암호화 (시그니처 만들기)
                 .compact();
     }
+
 }

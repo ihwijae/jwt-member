@@ -6,6 +6,7 @@ import com.jwtmember.service.LoginRequest;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.ServletInputStream;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
@@ -78,22 +79,38 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     @Override
     protected void successfulAuthentication(HttpServletRequest request, HttpServletResponse response, FilterChain chain, Authentication authentication) throws IOException, ServletException {
 
+
         log.info("로그인 성공");
-        CustomUserDetails customUserDetails = (CustomUserDetails) authentication.getPrincipal();
 
-        String email = customUserDetails.getUsername();
+        //이메일 가져오기
+        String email = authentication.getName();
 
-
+        // role 가져오기
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Iterator<? extends GrantedAuthority> iterator = authorities.iterator();
         GrantedAuthority auth = iterator.next();
-
         String role = auth.getAuthority();
-        log.info("role = {}", role);
 
-        String jwt = jwtUtil.createJwt(email, role, 60 * 60 * 10 * 1000L);
+        // 토큰 생성
+        String access = jwtUtil.createJwt("access", email, role, 600000L);
+        String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
-        response.addHeader("Authorization", "Bearer " + jwt);
+
+        response.setHeader("access", access);
+        response.addCookie(createCookie("refresh", refresh));
+        response.setStatus(HttpStatus.OK.value());
+
+
+
+    }
+
+    private Cookie createCookie(String key, String value) {
+        Cookie cookie = new Cookie(key, value);
+        cookie.setMaxAge(86400000); //쿠키 생명주기
+        cookie.setHttpOnly(true); // 클라이언트 단에서 js코드로 해당 쿠키를 접근 하지 못하게 하는 코드
+//        cookie.setSecure(true); //https 통신 사용할경우
+//        cookie.setPath("/"); 쿠키가 적용될 범위
+        return cookie;
 
     }
 
