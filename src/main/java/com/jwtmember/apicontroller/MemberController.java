@@ -35,11 +35,11 @@ public class MemberController {
         return memberSignUpRsp;
     }
 
-    @PostMapping("/login")
-    @ResponseStatus(HttpStatus.OK)
-    public LoginResponse login(@RequestBody @Valid LoginRequest request) {
-         return memberService.login(request);
-    }
+//    @PostMapping("/login")
+//    @ResponseStatus(HttpStatus.OK)
+//    public LoginResponse login(@RequestBody @Valid LoginRequest request) {
+//        return memberService.login(request);
+//    }
 
 
     // 이메일 중복 검증 api

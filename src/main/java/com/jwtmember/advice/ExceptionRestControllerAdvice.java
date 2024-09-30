@@ -2,6 +2,9 @@ package com.jwtmember.advice;
 
 import com.jwtmember.domain.Member;
 import com.jwtmember.exception.MemberException;
+import com.jwtmember.exception.RefreshTokenException;
+import com.jwtmember.exception.RefreshTokenException.RefreshTokenDataBase;
+import com.jwtmember.exception.RefreshTokenException.RefreshTokenExpiredException;
 import com.jwtmember.service.MemberSignUpRequest;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -60,21 +63,40 @@ public class ExceptionRestControllerAdvice {
 
     @ExceptionHandler(MemberException.CheckedPassWordDuplicateException.class)
     public ResponseEntity<List<String>> handleDuplicateCheckedPassWordException(MemberException.CheckedPassWordDuplicateException ex) {
-        List<String> errors = new ArrayList<>();
-
-        errors.add(ex.getMessage());
-
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MemberException.PassWordDuplicateException.class)
     public ResponseEntity<List<String>> handleDuplicatePassWordException(MemberException.PassWordDuplicateException ex) {
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+
+    }
+
+    @ExceptionHandler(RefreshTokenException.RefreshTokenNullException.class)
+    public ResponseEntity<List<String>> handleRefreshTokenException(RefreshTokenException.RefreshTokenNullException ex) {
+
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RefreshTokenExpiredException.class)
+    public ResponseEntity<List<String>> handleRefreshTokenExpiredException(RefreshTokenExpiredException ex) {
+
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+    @ExceptionHandler(RefreshTokenDataBase.class)
+    public ResponseEntity<List<String>> handleRefreshTokenDataBase(RefreshTokenDataBase ex) {
+        return createErrorResponse(ex.getMessage(), HttpStatus.BAD_REQUEST);
+    }
+
+
+
+    private ResponseEntity<List<String>> createErrorResponse(String message, HttpStatus status) {
         List<String> errors = new ArrayList<>();
 
-        errors.add(ex.getMessage());
+        errors.add(message);
 
-        return new ResponseEntity<>(errors, HttpStatus.BAD_REQUEST);
-
+        return new ResponseEntity<>(errors, status);
     }
 
 

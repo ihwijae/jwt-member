@@ -1,6 +1,8 @@
 package com.jwtmember.jwt;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jwtmember.domain.Refresh;
+import com.jwtmember.repository.RefreshRepository;
 import com.jwtmember.service.CustomUserDetails;
 import com.jwtmember.service.LoginRequest;
 import jakarta.servlet.FilterChain;
@@ -9,6 +11,7 @@ import jakarta.servlet.ServletInputStream;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -18,29 +21,26 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
 import org.springframework.util.StreamUtils;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;
+import java.util.Date;
 import java.util.Iterator;
 
 
 @Slf4j
+@RequiredArgsConstructor
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
 
     private final AuthenticationManager authenticationManager;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
 
-    public LoginFilter(AuthenticationManager authenticationManager, ObjectMapper objectMapper, JwtUtil jwtUtil) {
-        super(authenticationManager);
-        this.authenticationManager = authenticationManager;
-        this.objectMapper = objectMapper;
-        this.jwtUtil = jwtUtil;
-        setFilterProcessesUrl("/api/login");
-    }
 
 
 
@@ -92,16 +92,31 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
         String role = auth.getAuthority();
 
         // 토큰 생성
-        String access = jwtUtil.createJwt("access", email, role, 600000L);
+        String access = jwtUtil.createJwt("Authorization", email, role, 600000L);
         String refresh = jwtUtil.createJwt("refresh", email, role, 86400000L);
 
+        saveRefreshEntity(email, refresh, 86400000L);
 
-        response.setHeader("access", access);
+        response.setHeader("Authorization", "Bearer " + access);
         response.addCookie(createCookie("refresh", refresh));
         response.setStatus(HttpStatus.OK.value());
 
+        response.setCharacterEncoding("utf-8");
+        response.getWriter().print("로그인이 성공 했습니다");
 
 
+    }
+
+    public void saveRefreshEntity(String email, String refresh, Long expiredMs) {
+
+        Date date = new Date(System.currentTimeMillis() + expiredMs);
+
+        Refresh entity = Refresh.builder()
+                .email(email)
+                .refreshToken(refresh)
+                .expiration(date.toString())
+                .build();
+        refreshRepository.save(entity);
     }
 
     private Cookie createCookie(String key, String value) {
@@ -122,5 +137,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     log.info("로그인 실패");
     response.setStatus(401);
     }
+
 
 }

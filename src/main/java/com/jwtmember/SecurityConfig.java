@@ -1,9 +1,11 @@
 package com.jwtmember;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.jwtmember.jwt.CustomLogoutFilter;
 import com.jwtmember.jwt.JwtFilter;
 import com.jwtmember.jwt.JwtUtil;
 import com.jwtmember.jwt.LoginFilter;
+import com.jwtmember.repository.RefreshRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -17,6 +19,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.security.web.authentication.logout.LogoutFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 
@@ -33,6 +36,7 @@ public class SecurityConfig {
     private final AuthenticationConfiguration authenticationConfiguration;
     private final ObjectMapper objectMapper;
     private final JwtUtil jwtUtil;
+    private final RefreshRepository refreshRepository;
 
 
     @Bean
@@ -78,7 +82,7 @@ public class SecurityConfig {
         //경로별 인가 작업
         http
                 .authorizeHttpRequests((auth) -> auth
-                        .requestMatchers("/api/login", "/", "/api/join").permitAll() // 모든 권한을 허용
+                        .requestMatchers("/login", "/", "/join", "/reissue").permitAll() // 모든 권한을 허용
                         .requestMatchers("/admin").hasRole("ADMIN") // ADMIN 권한 사용자만 접근
                         .anyRequest().authenticated()); // 다른 요청에 대해서는 로그인한 사용자만 접근 가능
 
@@ -90,11 +94,14 @@ public class SecurityConfig {
 
         // LoginFilter (필터) 추가 - 스프링 시큐리티 필터체인에 필터를 등록
         http
-                .addFilterAt(new LoginFilter(authenticationManagerBean(authenticationConfiguration), objectMapper, jwtUtil), UsernamePasswordAuthenticationFilter.class);
+                .addFilterAt(new LoginFilter(authenticationManagerBean(authenticationConfiguration), objectMapper, jwtUtil, refreshRepository), UsernamePasswordAuthenticationFilter.class);
 
         //JwtFilter 필터 등록
-        http.addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class); //로그인 필터 앞에 먼저 실행한다는 뜻.
+        http
+                .addFilterBefore(new JwtFilter(jwtUtil), LoginFilter.class); //로그인 필터 앞에 먼저 실행한다는 뜻.
 
+        http
+                .addFilterBefore(new CustomLogoutFilter(refreshRepository, jwtUtil), LogoutFilter.class);
 
 
 
